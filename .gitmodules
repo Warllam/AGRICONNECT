@@ -4,3 +4,6 @@
 [submodule "agriconnect-actionneurs"]
 	path = agriconnect-actionneurs
 	url = https://github.com/Eliott-Tixier/agriconnect-actionneurs
+[submodule "agriconnect-releves"]
+	path = agriconnect-releves
+	url = https://github.com/Warllam/agriconnect-releves
