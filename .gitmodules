@@ -7,3 +7,6 @@
 [submodule "agriconnect-releves"]
 	path = agriconnect-releves
 	url = https://github.com/Warllam/agriconnect-releves
+[submodule "agriconnect-capteurs"]
+	path = agriconnect-capteurs
+	url = https://github.com/Eliott-Tixier/agriconnect-capteurs
