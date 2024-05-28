@@ -13,3 +13,6 @@
 [submodule "agriconnect-annuraire"]
 	path = agriconnect-annuraire
 	url = https://github.com/Martin-Billard/agriconnect-annuaire.git
+[submodule "agriconnect-gateway"]
+	path = agriconnect-gateway
+	url = https://github.com/Eliott-Tixier/agriconnect-gateway
