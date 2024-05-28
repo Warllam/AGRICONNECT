@@ -10,3 +10,6 @@
 [submodule "agriconnect-capteurs"]
 	path = agriconnect-capteurs
 	url = https://github.com/Eliott-Tixier/agriconnect-capteurs
+[submodule "agriconnect-annuraire"]
+	path = agriconnect-annuraire
+	url = https://github.com/Martin-Billard/agriconnect-annuaire.git
