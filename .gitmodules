@@ -1,18 +1,24 @@
 [submodule "agriconnect-config"]
 	path = agriconnect-config
 	url = https://github.com/Warllam/agriconnect-config
+	branch = main
 [submodule "agriconnect-actionneurs"]
 	path = agriconnect-actionneurs
 	url = https://github.com/Eliott-Tixier/agriconnect-actionneurs
+	branch = main
 [submodule "agriconnect-releves"]
 	path = agriconnect-releves
 	url = https://github.com/Warllam/agriconnect-releves
+	branch = main
 [submodule "agriconnect-capteurs"]
 	path = agriconnect-capteurs
 	url = https://github.com/Eliott-Tixier/agriconnect-capteurs
+	branch = main
 [submodule "agriconnect-annuraire"]
 	path = agriconnect-annuraire
 	url = https://github.com/Martin-Billard/agriconnect-annuaire.git
+	branch = main
 [submodule "agriconnect-gateway"]
 	path = agriconnect-gateway
 	url = https://github.com/Eliott-Tixier/agriconnect-gateway
+	branch = main
