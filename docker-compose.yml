@@ -1,0 +1,231 @@
+# Docker Compose Projet AMSC – MicroServices Agriconnect
+
+# version de compose
+version: '3.8'
+
+# Define services
+services:
+  # EDGE annuaire Eureka
+  agriconnect-annuraire:
+    # Lancement service Annuaire
+    build:
+      context: agriconnect-annuraire # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-annuraire:latest # Pour placer le TAG de version sur le nom de l'image
+    ports:
+      - "10001:10001" # Exposition port 10001 du conteneur Annuaire vers 10001 de l'hôte.
+    restart: always
+    container_name: agcannuaire
+    networks:
+      - backend
+    
+  # EDGE Serveur de configuration
+  agriconnect-config:
+    # Lancement service de configuration
+    build:
+      context: agriconnect-config # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-config:latest # Pour placer le TAG de version sur le nom de l'image
+    restart: "no"
+    depends_on:
+      - agriconnect-annuaire
+    container_name: agcconfig
+    networks:
+      - backend
+    environment:
+      WAIT_HOSTS: agcannuaire:10001 # Attente demarrage service Annuaire (attente 30s MAX)
+    healthcheck:
+      test: "curl --fail --silent localhost:10003/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # Micro-service de gestion des capteurs
+  agriconnect-capteurservice:
+    # Lancement service de gestion des capteurs
+    build:
+      context: agriconnect-capteurs # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-capteurs:latest # Pour placer le TAG de version sur le nom de l'image
+    restart: "no"
+    container_name: agccapteurservice
+    depends_on:
+      agriconnect-config:
+        condition: service_healthy
+      agriconnect-capteurmysql:
+        condition: service_healthy
+    networks:
+      - backend
+      - backcapteurs
+    environment:
+      WAIT_HOSTS: agcconfig:10003, agccapteurmysql:3306 # Attente demarrage services (attente 30s MAX)
+
+  # Micro-service de gestion des actionneurs
+  agriconnect-actionneurservice:
+    # Lancement service de gestion des actionneurs
+    build:
+      context: agriconnect-actionneurs # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-actionneurservice:latest # Pour placer le TAG de version sur le nom de l'image
+    restart: "no"
+    container_name: agcactionneurservice
+    depends_on:
+      agriconnect-config:
+        condition: service_healthy
+      agriconnect-actionneursmysql:
+        condition: service_healthy
+
+    networks:
+      - backend
+      - backactionneurs
+    environment:
+      WAIT_HOSTS: agcconfig:10003, agcactionneursmysql:3306 # Attente demarrage services (attente 30s MAX)
+
+  # Micro-service de gestion des relevés
+  agriconnect-releveservice:
+    # Lancement service de gestion des relevés
+    build:
+      context: agriconnect-releves # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-relevesservice:latest # Pour placer le TAG de version sur le nom de l'image
+    restart: "no"
+    container_name: agcrelevesservice
+    depends_on:
+      agriconnect-config:
+        condition: service_healthy
+      agriconnect-relevemongo:
+        condition: service_healthy
+
+    networks:
+      - backend
+      - backreleves
+    environment:
+      WAIT_HOSTS: agcconfig:10003, agcrelevemongo:27017 # Attente demarrage services (attente 30s MAX)
+
+  # Micro-service composite de gestion des comptes client avec comptes bancaires
+  agriconnect-capteurreleve:
+    # Lancement service de client-comptes
+    build:
+      context: agriconnect-capteurreleve # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-capteurreleve:latest # Pour placer le TAG de version sur le nom de l'image
+    restart: "no"
+    container_name: agccapteurreleve
+    depends_on:
+      - agriconnect-config
+      - agriconnect-capteurservice
+      - agriconnect-releveservice
+    networks:
+      - backend
+    environment:
+      WAIT_HOSTS: agcconfig:10003, agcrelevemongo:27017, agccapteurservice:10021, agcrelevesservice:10011 # Attente demarrage services (attente 30s MAX)
+
+  # Micro-service API Gateway
+  agriconnect-apigateway:
+    # Lancement service de gateway
+    build:
+      context: agriconnect-gateway # Répertoire (dans répertoire courant) contenant le dockerfile
+      dockerfile: Dockerfile
+    image: agriconnect-gateway:latest # Pour placer le TAG de version sur le nom de l'image
+    ports:
+      - "10000:10000" # Exposition port 10000 API Gateway
+    restart: "no"
+    container_name: agcgateway
+    depends_on:
+      - agriconnect-config
+      - agriconnect-actionneurservice
+      - agriconnect-capteurservice
+      - agriconnect-releveservice
+      - agriconnect-capteurreleve
+    networks:
+      - backend
+    environment:
+      WAIT_HOSTS: agcconfig:10003, agcrelevemongo:27017, agcactionneurservice:10021, agccapteurservice:10011, agcrelevesservice:10031, agccapteurreleve:10031  # Attente demarrage services (attente 30s MAX)
+
+  # Serveur Prometheus
+  agriconnect-prometheus:
+    # Lancement service Prometheus
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    restart: "no"
+    container_name: agcprometheus
+    depends_on:
+      - agriconnect-annuaire
+    networks:
+      - backend
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    environment:
+      WAIT_HOSTS: agcannuaire:10001 # Attente demarrage services (attente 30s MAX)
+
+  # Serveur Zipkin
+  agriconnect-zipkin:
+    # Lancement service Zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    restart: "no"
+    container_name: agczipkin
+    networks:
+      - backend
+
+  # Database Service Capteur (Mysql)
+  agriconnect-capteurmysql:
+    image: mysql:oracle
+    restart: always
+    container_name: agccapteurmysql
+    environment:
+      MYSQL_DATABASE: agriconnectbdcapteur
+      MYSQL_ROOT_PASSWORD: root
+    #volumes:
+    #  - db-data-mysql:/var/lib/mysql
+    networks:
+      - backcapteurs
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  # Database Service Actionneur (Mysql)
+  agriconnect-actionneursmysql:
+    image: mysql:oracle
+    restart: always
+    container_name: agcactionneursmysql
+    environment:
+      MYSQL_DATABASE: agriconnectbdactionneur
+      MYSQL_ROOT_PASSWORD: root
+    #volumes:
+    #  - db-data-mysql:/var/lib/mysql
+    networks:
+      - backactionneurs
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  # Database Service (Mongo)
+  agriconnect-relevemongo:
+    image: mongo:latest
+    restart: always
+    container_name: agcrelevemongo
+    #volumes:
+    #  - db-data-mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: agriconnectbd
+    networks:
+      - backreleves
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      timeout: 20s
+      retries: 10
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
+  backcapteurs:
+  backactionneurs:
+  backreleves:
