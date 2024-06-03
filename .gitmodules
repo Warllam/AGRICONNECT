@@ -22,3 +22,6 @@
 	path = agriconnect-dataschedule
 	url = https://github.com/Martin-Billard/agriconnect-dataschedule.git
 	branch = main
+[submodule "agriconnect-gateway"]
+	path = agriconnect-gateway
+	url = https://github.com/Eliott-Tixier/agriconnect-gateway
