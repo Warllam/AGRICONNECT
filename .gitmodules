@@ -30,3 +30,7 @@
 	path = agriconnect-web
 	url = https://github.com/Warllam/agriconnect-web.git
 	branch = main
+[submodule "agriconnect-capteurreleve"]
+	path = agriconnect-capteurreleve
+	url = https://github.com/CBO01818P/agriconnect-capteurreleve.git
+	branch = main
