@@ -25,3 +25,8 @@
 [submodule "agriconnect-gateway"]
 	path = agriconnect-gateway
 	url = https://github.com/Eliott-Tixier/agriconnect-gateway
+	branch = main
+[submodule "agriconnect-web"]
+	path = agriconnect-web
+	url = https://github.com/Warllam/agriconnect-web.git
+	branch = main
