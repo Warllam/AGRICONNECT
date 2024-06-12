@@ -45,3 +45,4 @@
 [submodule "agriconnect-config-files"]
 	path = agriconnect-config-files
 	url = https://github.com/Eliott-Tixier/agriconnect-config-files
+	branch = main
