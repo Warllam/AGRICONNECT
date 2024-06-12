@@ -34,3 +34,11 @@
 	path = agriconnect-capteurreleve
 	url = https://github.com/CBO01818P/agriconnect-capteurreleve.git
 	branch = main
+[submodule "agriconnect-utilisateurs"]
+	path = agriconnect-utilisateurs
+	url = https://github.com/Warllam/agriconnect-utilisateurs.git
+	branch = main
+[submodule "agriconnect-uca"]
+	path = agriconnect-uca
+	url = https://github.com/Warllam/agriconnect-uca
+	branch = main
