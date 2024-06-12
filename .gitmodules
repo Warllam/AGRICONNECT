@@ -38,3 +38,7 @@
 	path = agriconnect-utilisateurs
 	url = https://github.com/Warllam/agriconnect-utilisateurs.git
 	branch = main
+[submodule "agriconnect-uca"]
+	path = agriconnect-uca
+	url = https://github.com/Warllam/agriconnect-uca
+	branch = main

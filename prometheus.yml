@@ -51,3 +51,8 @@ scrape_configs:
     static_configs:
       - targets: [ 'host.docker.internal:10008' ]
 
+  - job_name: 'agriconnect-uca'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:10009' ]
+
