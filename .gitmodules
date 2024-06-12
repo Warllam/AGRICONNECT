@@ -42,3 +42,6 @@
 	path = agriconnect-uca
 	url = https://github.com/Warllam/agriconnect-uca
 	branch = main
+[submodule "agriconnect-config-files"]
+	path = agriconnect-config-files
+	url = https://github.com/Eliott-Tixier/agriconnect-config-files
