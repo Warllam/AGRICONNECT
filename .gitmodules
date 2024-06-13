@@ -46,3 +46,7 @@
 	path = agriconnect-config-files
 	url = https://github.com/Eliott-Tixier/agriconnect-config-files
 	branch = main
+[submodule "agriconnect-statistiques"]
+	path = agriconnect-statistiques
+	url = https://github.com/Martin-Billard/agriconnect-statistiques.git
+	branch = main
