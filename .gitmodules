@@ -50,3 +50,7 @@
 	path = agriconnect-statistiques
 	url = https://github.com/Martin-Billard/agriconnect-statistiques.git
 	branch = main
+[submodule "agriconnect-historique-actionneur"]
+	path = agriconnect-historique-actionneur
+	url = https://github.com/Martin-Billard/agriconnect-historique-actionneur.git
+	branch = main
