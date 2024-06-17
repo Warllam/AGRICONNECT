@@ -66,3 +66,9 @@ scrape_configs:
     static_configs:
       - targets: [ 'host.docker.internal:10011']
 
+  - job_name: 'agriconnect-limiteur'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:10012' ]
+
+
