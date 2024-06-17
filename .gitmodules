@@ -54,3 +54,6 @@
 	path = agriconnect-historique-actionneur
 	url = https://github.com/Martin-Billard/agriconnect-historique-actionneur.git
 	branch = main
+[submodule "agriconnect-limiteur"]
+	path = agriconnect-limiteur
+	url = https://github.com/Martin-Billard/agriconnect-limiteur.git
